@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const db = require('./db');
 const fs = require('fs');
+const https = require('https'); // <-- Add this line
 
 const app = express();
 app.use(cors());
@@ -41,7 +42,6 @@ app.post('/complaint', upload.single('images'), (req, res) => {
   });
 });
 
-
 app.get('/complaint', (req, res) => {
   const query = `SELECT * FROM complaint ORDER BY id DESC`;
   db.query(query, (err, results) => {
@@ -58,12 +58,22 @@ app.get('/complaint', (req, res) => {
   });
 });
 
-// Purani line (jo aapke code me hai)
-app.listen(5000, () => {
-  console.log('Server running on http://localhost:5000');
+// ==================== SSL/HTTPS PART STARTS HERE ====================
+
+// SSL certificate files (replace with your actual paths)
+const sslOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'cert.pem'))
+};
+
+// Start HTTPS server on 0.0.0.0:5000 (accessible from outside)
+https.createServer(sslOptions, app).listen(5000, '0.0.0.0', () => {
+  console.log('HTTPS server running on https://194.164.150.54:5000');
 });
 
-// Nayi line (jo lagani hai)
-app.listen(5000, '0.0.0.0', () => {
-  console.log('Server running on http://0.0.0.0:5000');
-});
+// ===================== REMOVE app.listen() ==========================
+// Remove or comment out any plain app.listen() lines
+// app.listen(5000, () => { ... });
+// app.listen(5000, '0.0.0.0', () => { ... });
+// ====================================================================
+
