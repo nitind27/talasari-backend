@@ -41,6 +41,23 @@ app.post('/complaint', upload.single('images'), (req, res) => {
   });
 });
 
+
+app.get('/complaint', (req, res) => {
+  const query = `SELECT * FROM complaint ORDER BY id DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching complaints:', err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    // Optionally, you can add the image URL for frontend usage
+    const complaints = results.map(row => ({
+      ...row,
+      imageUrl: row.images ? `${req.protocol}://${req.get('host')}/uploads/${row.images}` : null
+    }));
+    res.json(complaints);
+  });
+});
+
 // Purani line (jo aapke code me hai)
 app.listen(5000, () => {
   console.log('Server running on http://localhost:5000');
