@@ -41,6 +41,12 @@ app.post('/complaint', upload.single('images'), (req, res) => {
   });
 });
 
+// Purani line (jo aapke code me hai)
 app.listen(5000, () => {
   console.log('Server running on http://localhost:5000');
+});
+
+// Nayi line (jo lagani hai)
+app.listen(5000, '0.0.0.0', () => {
+  console.log('Server running on http://0.0.0.0:5000');
 });
